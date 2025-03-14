@@ -9,7 +9,7 @@ def mapa():
     try:
         # Usando o CSV da mesma pasta (subido para o GitHub)
         csv_path = 'coordenadas2.csv'
-        df = pd.read_csv(csv_path, sep=',', encoding='utf-8')
+        df = pd.read_csv(csv_path, sep=';', encoding='utf-8')
 
         # Criando o mapa
         mapa = folium.Map(location=[-23.5489, -46.6388], zoom_start=7)
