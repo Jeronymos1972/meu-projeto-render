@@ -1,6 +1,6 @@
-Nome;Latitude;Longitude;Data;Atividade;Contratada
-Cerezo;-19.33259444;-45.23282777;13/03/2025;Teste -Poço E-01 - Sede -  Martinho Campos;HIDROPOCOS
-Jaílson;-19.10744444;-46.69524166;13/03/2025;Reabertura Poço C-08 - Sede - Serra do Salitre;SOLOPOCOS
-João Paulo;-21.09116666;-42.96897222;13/03/2025;Teste -Poço C-11 - Sede - Uba;HIDROPOCOS
-Natal;-21.91452777;-45.56997222;13/03/2025;Teste C-20 - Sede - São Goncalo do Sapucai  ;HIDROPOCOS
-Cassimiro;-21.23323333;-45.01907777;13/03/2025;Perfuração - Poço C-06 - Sede - Lavras;HIDROPOCOS
+ï»¿Nome;Latitude;Longitude;Data;Atividade;Contratada;Status
+Cerezo;-19.33259444;-45.23282777;13/03/2025;Teste -PoÃ§o E-01 - Sede -  Martinho Campos;HIDROPOÃ‡OS;Finalizada
+JaÃ­lson;-19.10744444;-46.69524166;13/03/2025;Reabertura PoÃ§o C-08 - Sede - Serra do Salitre;SOLOPOÃ‡OS;em_Andamento
+JoaÃµ Paulo;-21.09116666;-42.96897222;13/03/2025;Teste -PoÃ§o C-11 - Sede - Uba;HIDROPOÃ‡OS;em_Andamento
+Natal;-21.91452777;-45.56997222;13/03/2025;Teste C-20 - Sede - SÃ£o Goncalo do Sapucai  ;HIDROPOÃ‡OS;em_Andamento
+JoaÃµ Paulo;-21.23323333;-45.01907777;13/03/2025;PerfuraÃ§Ã£o - PoÃ§o C-06 - Sede - Lavras;HIDROPOÃ‡OS;Finalizada
