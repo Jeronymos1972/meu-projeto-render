@@ -22,7 +22,7 @@ def mapa():
         if not os.path.exists(csv_path):
             return "Erro: O arquivo coordenadas2.csv não foi encontrado."
 
-        # Lendo o CSV
+        # Lendo o CSV com separador ';'
         df = pd.read_csv(csv_path, sep=';', encoding='utf-8')
 
         # Criando o mapa
@@ -58,31 +58,55 @@ def mapa():
         </div>
         '''
 
-        # Criando a legenda com todos os funcionários por status
-        legend_entries = {
-            'finalizada': df[df['Status'].str.lower() == 'finalizada']['Nome'].tolist() or ['N/A'],
-            'em_andamento': df[df['Status'].str.lower() == 'em_andamento']['Nome'].tolist() or ['N/A'],
-            'cancelada': df[df['Status'].str.lower() == 'cancelada']['Nome'].tolist() or ['N/A']
-        }
-        legend_html = '''
-        <div style="position: fixed; top: 60px; right: 10px; z-index: 1000; padding: 10px; background-color: white; border: 2px solid gray; border-radius: 5px; max-width: 200px;">
-            <p><strong>Status do Serviço</strong></p>
-            <p><i class="fa fa-map-marker" style="color:green"></i> Finalizada - {finalizada}<br>
-               <i class="fa fa-map-marker" style="color:blue"></i> Em Andamento - {em_andamento}<br>
-               <i class="fa fa-map-marker" style="color:red"></i> Cancelada - {cancelada}</p>
-        </div>
-        '''.format(
-            finalizada=', '.join(legend_entries['finalizada']),
-            em_andamento=', '.join(legend_entries['em_andamento']),
-            cancelada=', '.join(legend_entries['cancelada'])
-        )
+        # Criando a legenda em forma de tabela
+        table_rows = ''
+        for index, row in df.iterrows():
+            status = str(row['Status']).lower().strip()
+            color = 'green' if status == 'finalizada' else 'blue' if status == 'em_andamento' else 'red' if status == 'cancelada' else 'gray'
+            location = f"Lat: {row['Latitude']}, Lon: {row['Longitude']}"
+            table_rows += f'''
+            <tr>
+                <td><i class="fa fa-map-marker" style="color:{color}"></i> {row.get('Nome', 'N/A')}</td>
+                <td>{row.get('Status', 'N/A').capitalize()}</td>
+                <td>{row.get('Contratada', 'N/A')}</td>
+                <td>{location}</td>
+            </tr>
+            '''
 
-        # Adicionando a escala (inferior direito)
-        scale_html = '''
-        <div style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; padding: 5px; background-color: white; border: 2px solid gray; border-radius: 5px;">
-            <p><strong>Escala</strong></p>
-            <p>1 cm = 100 km</p>
+        legend_html = '''
+        <div style="position: fixed; top: 60px; right: 10px; z-index: 1000; padding: 10px; background-color: white; border: 2px solid gray; border-radius: 5px; max-width: 400px; max-height: 300px; overflow-y: auto;">
+            <p><strong>Status do Serviço</strong></p>
+            <table style="border-collapse: collapse; width: 100%;">
+                <thead>
+                    <tr style="background-color: #f0f0f0;">
+                        <th style="border: 1px solid #ddd; padding: 8px;">Funcionário</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Status</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Contratada</th>
+                        <th style="border: 1px solid #ddd; padding: 8px;">Localização</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {table_rows}
+                </tbody>
+            </table>
         </div>
+        '''.format(table_rows=table_rows)
+
+        # Adicionando a escala dinâmica
+        scale_html = '''
+        <div id="scale" style="position: fixed; bottom: 10px; right: 10px; z-index: 1000; padding: 5px; background-color: white; border: 2px solid gray; border-radius: 5px;">
+            <p><strong>Escala</strong></p>
+            <p id="scale-value">Carregando...</p>
+        </div>
+        <script>
+            var map = document.querySelector('.folium-map');
+            map.addEventListener('zoomend', function() {
+                var zoom = map._leaflet_map.getZoom();
+                var scale = Math.pow(2, 18 - zoom) * 100;
+                document.getElementById('scale-value').innerText = '1 cm ≈ ' + (scale > 1000 ? (scale / 1000).toFixed(1) + ' km' : scale.toFixed(1) + ' m');
+            });
+            window.dispatchEvent(new Event('zoomend'));
+        </script>
         '''
 
         # Adicionando título, legenda e escala ao mapa
@@ -90,7 +114,7 @@ def mapa():
         mapa.get_root().html.add_child(folium.Element(legend_html))
         mapa.get_root().html.add_child(folium.Element(scale_html))
 
-        # Retornando apenas o HTML do mapa
+        # Retornando o HTML do mapa
         return mapa._repr_html_()
 
     except Exception as e:
