@@ -42,6 +42,8 @@ def mapa():
                 marker_color = 'blue'
             elif status == 'cancelada':
                 marker_color = 'red'
+            elif status == 'programada':
+                marker_color = 'yellow'
             else:
                 marker_color = 'gray'
 
