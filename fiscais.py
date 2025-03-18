@@ -64,7 +64,7 @@ def mapa():
         table_rows = ''
         for index, row in df.iterrows():
             status = str(row['Status']).lower().strip()
-            color = 'green' if status == 'finalizada' else 'blue' if status == 'em_andamento' else 'red' if status == 'cancelada' else 'gray'
+            color = 'green' if status == 'finalizada' else 'blue' if status == 'em_andamento' else 'red' if status == 'cancelada' else 'yellow' if status == 'programada' else 'gray'
             location = f"Lat: {row['Latitude']}, Lon: {row['Longitude']}"
             table_rows += f'''
             <tr>
