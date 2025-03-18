@@ -11,6 +11,7 @@ import pandas as pd
 import folium
 from flask import Flask
 import os
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -18,12 +19,12 @@ app = Flask(__name__)
 def mapa():
     try:
         # Verificar se o arquivo existe
-        csv_path = 'coordenadas2.csv'
+        csv_path = 'coordenadas2.xlsx'
         if not os.path.exists(csv_path):
-            return "Erro: O arquivo coordenadas2.csv não foi encontrado."
+            return "Erro: O arquivo coordenadas2.xlsx não foi encontrado."
 
-        # Lendo o CSV com separador ';'
-        df = pd.read_csv(csv_path, sep=';', encoding='latin1')
+        # Lendo o arquivo Excel
+        df = pd.read_excel(csv_path, engine='openpyxl')
 
         # Criando o mapa
         mapa = folium.Map(location=[-23.5489, -46.6388], zoom_start=7)
@@ -33,7 +34,7 @@ def mapa():
             if pd.isna(row['Latitude']) or pd.isna(row['Longitude']) or pd.isna(row['Status']):
                 continue
 
-            popup_text = f"<div style='font-size: 18px;'>{row.get('Nome', 'Sem Nome')}<br>Data: {row.get('Data', 'Sem Data')}<br>Atividade: {row.get('Atividade', 'Sem Atividade')}<br>Localização: Lat: {row.get('Latitude', 'N/A')}, Lon: {row.get('Longitude', 'N/A')}</div>"
+            popup_text = f"<div style='font-size: 18px;'>{row.get('Nome', 'Sem Nome')}<br>Data: {row.get('Data', 'N/A').strftime('%d/%m/%Y') if pd.notna(row.get('Data')) and hasattr(row.get('Data'),'strftime') else row.get('Data', 'N/A')}<br>Atividade: {row.get('Atividade', 'Sem Atividade')}<br>Localização: Lat: {row.get('Latitude', 'N/A')}, Lon: {row.get('Longitude', 'N/A')}</div>"
 
             status = str(row['Status']).lower().strip()
             if status == 'finalizada':
@@ -68,9 +69,9 @@ def mapa():
             table_rows += f'''
             <tr>
                 <td><i class="fa fa-map-marker" style="color:{color}"></i> {row.get('Nome', 'N/A')}</td>
-                <td>{row.get('Status', 'N/A').capitalize()}</td>
+                <td>{str(row.get('Status', 'N/A')).capitalize() if pd.notna(row.get('Status')) else 'N/A'}</td>
                 <td>{row.get('Contratada', 'N/A')}</td>
-                <td>{row.get('Data', 'N/A')}</td>
+                <td>{row.get('Data', 'N/A').strftime('%d/%m/%y') if pd.notna(row.get('Data')) and hasattr(row.get('Data'), 'strftime') else row.get('Data', 'N/A')}</td>
             </tr>
             '''
 
@@ -100,13 +101,21 @@ def mapa():
             <p id="scale-value">Carregando...</p>
         </div>
         <script>
-            var map = document.querySelector('.folium-map');
-            map.addEventListener('zoomend', function() {
-                var zoom = map._leaflet_map.getZoom();
-                var scale = Math.pow(2, 18 - zoom) * 100;
-                document.getElementById('scale-value').innerText = '1 cm ≈ ' + (scale > 1000 ? (scale / 1000).toFixed(1) + ' km' : scale.toFixed(1) + ' m');
+            function updateScale() {
+                var map = document.querySelector('.folium-map');
+                if (map && map._leaflet_map) {
+                    var zoom = map._leaflet_map.getZoom();
+                    var scale = Math.pow(2, 18 - zoom) * 100;
+                    document.getElementById('scale-value').innerText = '1 cm ≈ ' + (scale > 1000 ? (scale / 1000).toFixed(1) + ' km' : scale.toFixed(1) + ' m');
+                }
+            }
+            window.addEventListener('load', function() {
+                updateScale(); // Inicializa a escala ao carregar
+                var map = document.querySelector('.folium-map');
+                if (map && map._leaflet_map) {
+                    map.addEventListener('zoomend', updateScale);
+                }
             });
-            window.dispatchEvent(new Event('zoomend'));
         </script>
         '''
 
