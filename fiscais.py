@@ -21,10 +21,10 @@ app = Flask(__name__)
 def mapa():
     try:
         # Configurar as credenciais
-scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 
 # Tenta carregar credenciais do ambiente (Render)
-creds_dict = os.environ.get('GOOGLE_CREDENTIALS')
+        creds_dict = os.environ.get('GOOGLE_CREDENTIALS')
 
 if creds_dict:
     # Se a variável de ambiente existe, usa ela
