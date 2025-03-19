@@ -22,7 +22,7 @@ def mapa():
     try:
         # Configurar as credenciais
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = ServiceAccountCredentials.from_json_keyfile_name('GOOGLE_CREDENTIALS', scope) if not creds:creds = ServiceAccountCredentials.from_jason_keyfile_name('credentials.json', scope) # Ou use os.environ.get('GOOGLE_CREDENTIALS')
+        creds = ServiceAccountCredentials.from_json_keyfile_name('GOOGLE_CREDENTIALS', scope) if not creds:creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope) # Ou use os.environ.get('GOOGLE_CREDENTIALS')
         client = gspread.authorize(creds)
 
         # Abrir a planilha
