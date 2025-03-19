@@ -29,7 +29,7 @@ def mapa():
     if creds_dict:
     # Se a variável de ambiente existe, usa ela
     creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-      else:
+    else:
     # Caso contrário, usa o arquivo local (para testes locais)
     creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
 
