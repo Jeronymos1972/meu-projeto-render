@@ -14,6 +14,7 @@ import os
 from datetime import datetime
 import gspread
 from oauth2client.service_account import ServiceAccountCredentials
+import json
 
 app = Flask(__name__)
 
@@ -22,24 +23,22 @@ def mapa():
     try:
         # Configurar as credenciais
         scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-
-# Tenta carregar credenciais do ambiente (Render)
         creds_dict = os.environ.get('GOOGLE_CREDENTIALS')
 
-    if creds_dict:
-    # Se a variável de ambiente existe, usa ela
-    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
-    else:
-    # Caso contrário, usa o arquivo local (para testes locais)
-    creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+        if creds_dict:
+            # Se a variável de ambiente existe, usa ela
+            creds = ServiceAccountCredentials.from_json_keyfile_dict(json.loads(creds_dict), scope)
+        else:
+            # Caso contrário, usa o arquivo local (para testes locais)
+            creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
 
-client = gspread.authorize(creds)
+        client = gspread.authorize(creds)
 
         # Abrir a planilha
         sheet = client.open("Acompanhamento_Fiscais").sheet1
         data = sheet.get_all_records()
         df = pd.DataFrame(data)
-        df['Data'] = pd.to_datetime(df['Data'], errors='coerce').dt.strftime('%d-%m-%Y')
+        df['Data'] = pd.to_datetime(df['Data'], errors='coerce').dt.strftime('%Y-%m-%d')
 
         # Criando o mapa
         mapa = folium.Map(location=[-23.5489, -46.6388], zoom_start=7)
