@@ -21,9 +21,19 @@ app = Flask(__name__)
 def mapa():
     try:
         # Configurar as credenciais
-        scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-        creds = ServiceAccountCredentials.from_json_keyfile_name('GOOGLE_CREDENTIALS', scope) if not creds:creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope) # Ou use os.environ.get('GOOGLE_CREDENTIALS')
-        client = gspread.authorize(creds)
+scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+
+# Tenta carregar credenciais do ambiente (Render)
+creds_dict = os.environ.get('GOOGLE_CREDENTIALS')
+
+if creds_dict:
+    # Se a variável de ambiente existe, usa ela
+    creds = ServiceAccountCredentials.from_json_keyfile_dict(creds_dict, scope)
+else:
+    # Caso contrário, usa o arquivo local (para testes locais)
+    creds = ServiceAccountCredentials.from_json_keyfile_name('credentials.json', scope)
+
+client = gspread.authorize(creds)
 
         # Abrir a planilha
         sheet = client.open("Acompanhamento_Fiscais").sheet1
