@@ -1,0 +1,14 @@
+# render.yaml
+services:
+  - type: web
+    name: acompanhamento-fiscais # Nome do seu serviço web. Pode ser qualquer nome que você goste.
+    env: python # Indica que é um ambiente Python
+    buildCommand: pip install -r requirements.txt # Comando para instalar as dependências
+    startCommand: gunicorn app:app # Comando para iniciar o servidor Gunicorn
+    plan: free # Você pode escolher 'free' para começar, ou 'starter' etc.
+    numInstances: 1 # Quantas instâncias do seu aplicativo você quer rodando
+    envVars: # Variáveis de ambiente
+      - key: GOOGLE_CREDENTIALS
+        sync: false # Importante: você vai adicionar o valor manualmente no painel do Render
+      - key: PYTHONUNBUFFERED
+        value: "1" # Garante que os logs do Python apareçam em tempo real
